@@ -12,23 +12,17 @@ function telNumberWithoutFormat(str){
 }
 
 function validatePhoneNumber (str, startingIndex, hasCountryCode){
-	//console.log(`in validatePhoneNumber: startingIndex = ${startingIndex}, 
-	//	char at startingIndex = ${str[startingIndex]}, hasCountryCode = ${hasCountryCode}`);
 	if (hasCountryCode){
 		while (str[startingIndex] === " "){
 			startingIndex += 1;
 		}
 	}
 	//for area code, XXX, (XXX), XXX-, XXX 
-	//console.log(`in area code check ${str[startingIndex]} ${startingIndex}`);
 	switch (str[startingIndex]){
 		case "(":
-			//console.log(`in "(", ${str[startingIndex + 4]}`);
 			if (str[startingIndex + 4] != ")"){
-				//console.log(`in "(", ${str[startingIndex + 4]}`);
 				return false;
 			} else {
-				//console.log(`in "(", ${str[startingIndex + 5]}`);
 				startingIndex = startingIndex + 5; //look at the char after )
 			}
 			break;
@@ -43,17 +37,14 @@ function validatePhoneNumber (str, startingIndex, hasCountryCode){
 		case "8":
 		case "9":
 			for (let i = startingIndex + 1; i < startingIndex + 2; i ++){
-				//console.log(`${str[i]}`);
 				if ((str.charCodeAt(i) < 48) && (str.charCodeAt(i) > 57)){
 					return false;
 				}
 			}
 			startingIndex += 3;  //look at the char after 3rd number
-			//console.log(`====> ${str[startingIndex]}`);
 			break;
 	}
 	//for the frist 3 phone number -XXX, spaceXXX, XXX
-	//console.log(`in the first 3 phone number check ${str[startingIndex]} ${startingIndex}`);
 	switch (str[startingIndex]){
 		case "-":
 			//console.log(`${str[startingIndex]}`);
@@ -64,7 +55,6 @@ function validatePhoneNumber (str, startingIndex, hasCountryCode){
 
 		break;
 		case " ":
-			//console.log(`in " ", ${str[startingIndex + 4]}`);
 			if ((str[startingIndex + 4] != "-") && (str[startingIndex + 4] != " ")){
 				return false;
 			};
@@ -85,7 +75,6 @@ function validatePhoneNumber (str, startingIndex, hasCountryCode){
 				return false;
 			};
 			for (let i=startingIndex; i < (startingIndex + 3); i++){
-				//console.log(`${str[i]}, ${i}`);
 				if ((str.charCodeAt(i) > 57) || (str.charCodeAt(i) < 48)){
 					return false;
 				}
@@ -97,13 +86,12 @@ function validatePhoneNumber (str, startingIndex, hasCountryCode){
 		break;
 
 	}
-	//to check the last 4 digits, to make sure all the remaining chars are numbers
+	//to check the last portion of digits, to make sure all the remaining chars are numbers
 	for (let i = startingIndex ;  i < str.length; i ++){
 		if ((str.charCodeAt(i) > 57) || (str.charCodeAt(i) < 48)){
 				return false;
 		}
 	}
-	//console.log(`in validatePhoneNumber, return true`);
 	return true;
 }
 
@@ -112,7 +100,6 @@ function telephoneCheck(str){
 	var telNum = telNumberWithoutFormat(str);	
 	var hasCountryCode = false;
 	console.log(`oringal telephoneNumber: ${str}`);
-	//console.log(`tel number without format: ${telNum}, and length = ${telNum.length}`);
 	if ((telNum.length < 10) || (telNum.length > 11)){
 		console.log(`invalid telephone number : ${str}`);
 		return false;
@@ -120,12 +107,6 @@ function telephoneCheck(str){
 	if (telNum.length === 11){
 		hasCountryCode = true;
 	}
-	/*
-	console.log("valid telephone number");
-	console.log(`oringal telephoneNumber: ${str}`);
-	console.log(`tel number without format: ${telNum}, and length = ${telNum.length}`);
-	console.log("=========================================================================");
-	*/
 	var phoneStartingIndex = 0;
 	if (hasCountryCode){
 		if (str[0] != "1"){
@@ -136,16 +117,9 @@ function telephoneCheck(str){
 			phoneStartingIndex = 1;
 		}
 	}
-	/*
-	console.log("valid telephone number");
-	console.log(`oringal telephoneNumber: ${str}`);
-	console.log(`tel number without format: ${telNum}, and length = ${telNum.length}`);
-	console.log("=========================================================================");
-	*/
+
 	if (validatePhoneNumber (str, phoneStartingIndex, hasCountryCode)){
 		console.log(`valid telephone number : ${str}`);
-		//console.log(`oringal telephoneNumber: ${str}`);
-		//console.log(`tel number without format: ${telNum}, and length = ${telNum.length}`);
 	}
 	else {
 		console.log(`invalid telephone number : ${str}`);
