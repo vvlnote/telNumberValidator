@@ -1,10 +1,11 @@
+var isNumerical = (char) => {
+	return ((char >= "0") && (char <= "9")) ? true : false;
+}
+
 function telNumberWithoutFormat(str){
 	var newStr = "";
-
-
 	for (let i = 0; i < str.length; i++){
-		let charCode = str.charCodeAt(i);
-		if ((charCode >= 48)&&(charCode <= 57)){ //this char is between 0-9
+		if(isNumerical(str[i])) {
 			newStr += str[i];
 		}
 	}
@@ -18,78 +19,54 @@ function validatePhoneNumber (str, startingIndex, hasCountryCode){
 		}
 	}
 	//for area code, XXX, (XXX), XXX-, XXX 
-	switch (str[startingIndex]){
-		case "(":
+	if (isNumerical(str[startingIndex])) {
+		for (let i = startingIndex + 1; i < startingIndex + 2; i ++){
+			if(!isNumerical(str[i])) {
+				return false;
+			}
+		}
+		startingIndex += 3;  //look at the char after 3rd number		
+	} else {
+		if (str[startingIndex] === "(") {
 			if (str[startingIndex + 4] != ")"){
 				return false;
 			} else {
 				startingIndex = startingIndex + 5; //look at the char after )
-			}
-			break;
-		case "0":
-		case "1":
-		case "2":
-		case "3":
-		case "4":
-		case "5":
-		case "6":
-		case "7":
-		case "8":
-		case "9":
-			for (let i = startingIndex + 1; i < startingIndex + 2; i ++){
-				if ((str.charCodeAt(i) < 48) && (str.charCodeAt(i) > 57)){
-					return false;
-				}
-			}
-			startingIndex += 3;  //look at the char after 3rd number
-			break;
+			}			
+		}
 	}
+
 	//for the frist 3 phone number -XXX, spaceXXX, XXX
-	switch (str[startingIndex]){
-		case "-":
-			//console.log(`${str[startingIndex]}`);
+	if (isNumerical(str[startingIndex])) {
+		if ((str[startingIndex + 3] != "-") && 
+			(str[startingIndex + 3] != " ") && 
+			(isNumerical(str[startingIndex + 3]) === false)) { 
+			return false;
+			};
+		
+		for (let i=startingIndex; i < (startingIndex + 3); i++){
+			if (!isNumerical(str[i])){
+				return false;
+			}
+		}
+		startingIndex +=4;		
+	} else {
+		if (str[startingIndex] === "-"){
 			if (str[startingIndex + 4] != "-"){
 				return false;
 			}
-			startingIndex += 5;
-
-		break;
-		case " ":
+			startingIndex += 5;			
+		} else if(str[startingIndex] === " ") {
 			if ((str[startingIndex + 4] != "-") && (str[startingIndex + 4] != " ")){
 				return false;
 			};
-			startingIndex +=5;
-		break;
-		case "0":
-		case "1":
-		case "2":
-		case "3":
-		case "4":
-		case "5":
-		case "6":
-		case "7":
-		case "8":
-		case "9":
-			if ((str[startingIndex + 3] != "-") && (str[startingIndex + 3] != " ")
-				&& (str.charCodeAt(startingIndex + 3) > 57) && (str.charCodeAt(startingIndex + 3) < 48)){
-				return false;
-			};
-			for (let i=startingIndex; i < (startingIndex + 3); i++){
-				if ((str.charCodeAt(i) > 57) || (str.charCodeAt(i) < 48)){
-					return false;
-				}
-			}
-			startingIndex +=4;
-		break;
-		default:
-			return false;
-		break;
-
+			startingIndex +=5;			
+		}
 	}
 	//to check the last portion of digits, to make sure all the remaining chars are numbers
 	for (let i = startingIndex ;  i < str.length; i ++){
-		if ((str.charCodeAt(i) > 57) || (str.charCodeAt(i) < 48)){
-				return false;
+		if(!isNumerical(str[i])) {
+			return false;
 		}
 	}
 	return true;
@@ -104,11 +81,10 @@ function telephoneCheck(str){
 		console.log(`invalid telephone number : ${str}`);
 		return false;
 	}
+	var phoneStartingIndex = 0;
+
 	if (telNum.length === 11){
 		hasCountryCode = true;
-	}
-	var phoneStartingIndex = 0;
-	if (hasCountryCode){
 		if (str[0] != "1"){
 			console.log(`invalid telephone number : ${str}`);
 			return false;
